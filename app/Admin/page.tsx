@@ -24,7 +24,7 @@ export default function Home() {
       defaultValues.email === process.env.NEXT_PUBLIC_USERNAME &&
       defaultValues.password === process.env.NEXT_PUBLIC_PASSPHRASE
     ) {
-      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem('isLoggedIn', 'true');
       router.push("https://iscs-employee-ats.onrender.com");
     } else {
       setError("Invalid credentials");
@@ -35,10 +35,19 @@ export default function Home() {
 
   return (
     <div className="flex h-screen">
+
+<div className="w-2/3 relative">
+        <Image
+          src="/Attendance.webp"
+          alt="Attendance"
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
       <div className="w-1/3 p-8 flex flex-col justify-center">
         <div className="flex justify-center mb-5">
           <div className="inline-flex items-center justify-center">
-            <span className="pr-2 text-xl font-semibold">Credentials</span>
+            <span className="pr-2 text-xl font-semibold">Admin Credentials</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="icon icon-tabler icon-tabler-key text-[#00674A]"
@@ -69,9 +78,7 @@ export default function Home() {
                 id="username"
                 type="username"
                 value={defaultValues.email}
-                onChange={(e) =>
-                  setDefaultValues({ ...defaultValues, email: e.target.value })
-                }
+                onChange={(e) => setDefaultValues({ ...defaultValues, email: e.target.value })}
                 required
               />
             </div>
@@ -81,42 +88,23 @@ export default function Home() {
                 id="password"
                 type="password"
                 value={defaultValues.password}
-                onChange={(e) =>
-                  setDefaultValues({
-                    ...defaultValues,
-                    password: e.target.value,
-                  })
-                }
+                onChange={(e) => setDefaultValues({ ...defaultValues, password: e.target.value })}
                 required
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}
-            <div className="flex flex-col items-center mt-5 space-y-2">
+            <div className="flex justify-center mt-5">
               <Button
                 type="submit"
                 className="w-full bg-[#00674A] text-white hover:bg-[#005a41] transition-colors duration-200"
               >
                 Sign In
               </Button>
-              {/* Admin Login Link */}
-              <a
-                href="/Admin"
-                className="text-sm text-[#00674A] hover:underline"
-              >
-                Admin Login
-              </a>
             </div>
           </form>
         )}
       </div>
-      <div className="w-2/3 relative">
-        <Image
-          src="/Attendance.webp"
-          alt="Attendance"
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
+      
     </div>
   );
 }
