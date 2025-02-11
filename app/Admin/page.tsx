@@ -25,7 +25,7 @@ export default function Home() {
       defaultValues.password === process.env.NEXT_PUBLIC_PASSPHRASE
     ) {
       localStorage.setItem('isLoggedIn', 'true');
-      router.push("https://iscs-employee-ats.onrender.com");
+      router.push("https://attendance-tracking.vercel.app/Upload");
     } else {
       setError("Invalid credentials");
     }
