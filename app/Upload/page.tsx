@@ -76,7 +76,7 @@ export default function Page() {
       </div>
 
       <Card className="z-10 bg-white p-6 rounded-lg shadow-lg w-2/3 text-center">
-        <h2 className="text-2xl font-bold mb-4">Upload {formattedMonth} month's Attendance File</h2>
+        <h2 className="text-2xl font-bold mb-4">Upload {formattedMonth} month&apos;s Attendance File</h2>
 
         <label className="inline-block px-4 py-2 bg-green-600 text-white font-semibold rounded cursor-pointer hover:bg-green-700 transition duration-200">
           Choose File
