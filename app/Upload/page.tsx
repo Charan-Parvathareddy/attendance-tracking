@@ -20,6 +20,9 @@ export default function Page() {
   const [uploadedMonth, setUploadedMonth] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   // Get last month dynamically
   const lastMonth = subMonths(new Date(), 1);
@@ -31,6 +34,7 @@ export default function Page() {
 
     setFile(uploadedFile);
     setUploadedMonth(`${formattedMonth}`);
+    setUploadSuccess(false);
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -51,27 +55,40 @@ export default function Page() {
   const handleUploadConfirmation = async () => {
     if (!file) return;
 
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadSuccess(false);
+    
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      // Fixed endpoint URL - adjust this to your actual endpoint
-      const response = await fetch("https://ats-datapipeline.onrender.com/api/upload", {
+      // Use the correct endpoint as indicated by your curl command
+      const response = await fetch("https://ats-datapipeline.onrender.com/upload/", {
         method: "POST",
+        headers: {
+          "accept": "application/json"
+          // Content-Type is automatically set when using FormData
+        },
         body: formData,
       });
 
       if (response.ok) {
-        alert("File uploaded successfully!");
+        setUploadSuccess(true);
+        setTimeout(() => {
+          setIsDialogOpen(false);
+        }, 1500);
       } else {
-        alert(`Upload failed. Status: ${response.status}. Please try again.`);
+        const errorText = await response.text();
+        console.error("Upload failed:", response.status, errorText);
+        setUploadError(`Upload failed (${response.status}): ${errorText || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Upload error:", error);
-      alert("An error occurred while uploading.");
+      setUploadError(`Connection error: ${error instanceof Error ? error.message : "Unknown error"}`);
+    } finally {
+      setIsUploading(false);
     }
-
-    setIsDialogOpen(false);
   };
 
   return (
@@ -139,7 +156,7 @@ export default function Page() {
       </Card>
 
       {/* Fixed Confirmation Dialog with proper accessibility */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={(open) => !isUploading && setIsDialogOpen(open)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Upload</DialogTitle>
@@ -147,10 +164,29 @@ export default function Page() {
               Please confirm that you want to upload the attendance file for {uploadedMonth}.
             </DialogDescription>
           </DialogHeader>
+          
+          {uploadError && (
+            <div className="text-red-600 bg-red-50 p-2 rounded border border-red-200 my-2">
+              {uploadError}
+            </div>
+          )}
+          
+          {uploadSuccess && (
+            <div className="text-green-600 bg-green-50 p-2 rounded border border-green-200 my-2">
+              File uploaded successfully!
+            </div>
+          )}
+          
           <DialogFooter className="mt-4 flex justify-end">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleUploadConfirmation} className="bg-green-600 text-white hover:bg-green-700 ml-2">
-              Confirm
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isUploading}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUploadConfirmation} 
+              className="bg-green-600 text-white hover:bg-green-700 ml-2"
+              disabled={isUploading || uploadSuccess}
+            >
+              {isUploading ? "Uploading..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
