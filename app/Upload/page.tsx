@@ -1,11 +1,16 @@
-"use client";
-
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogFooter,
+  DialogTitle,
+  DialogDescription 
+} from "@/components/ui/dialog";
 import { format, subMonths } from "date-fns";
 
 export default function Page() {
@@ -48,7 +53,8 @@ export default function Page() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("https://ats-datapipeline.onrender.com/upload_file_upload__post", {
+      // Fixed endpoint URL - adjust this to your actual endpoint
+      const response = await fetch("https://ats-datapipeline.onrender.com/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -56,7 +62,7 @@ export default function Page() {
       if (response.ok) {
         alert("File uploaded successfully!");
       } else {
-        alert("Upload failed. Please try again.");
+        alert(`Upload failed. Status: ${response.status}. Please try again.`);
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -130,11 +136,15 @@ export default function Page() {
         )}
       </Card>
 
-      {/* Confirmation Dialog */}
+      {/* Fixed Confirmation Dialog with proper accessibility */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-          <DialogHeader className="text-lg font-semibold">Confirm Upload</DialogHeader>
-          <p className="text-gray-600">Are you sure you want to upload this file?</p>
+          <DialogHeader>
+            <DialogTitle>Confirm Upload</DialogTitle>
+            <DialogDescription>
+              Please confirm that you want to upload the attendance file for {uploadedMonth}.
+            </DialogDescription>
+          </DialogHeader>
           <DialogFooter className="mt-4 flex justify-end">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
             <Button onClick={handleUploadConfirmation} className="bg-green-600 text-white hover:bg-green-700 ml-2">
