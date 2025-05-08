@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import React, { useState, FormEvent } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [defaultValues, setDefaultValues] = useState({
     email: "",
     password: "",
@@ -25,7 +25,7 @@ export default function Home() {
       defaultValues.password === process.env.NEXT_PUBLIC_PASSPHRASE
     ) {
       localStorage.setItem("isLoggedIn", "true");
-      router.push("https://iscs-employee-ats.onrender.com");
+      window.location.href =("http://192.168.11.101:8050");
     } else {
       setError("Invalid credentials");
     }
